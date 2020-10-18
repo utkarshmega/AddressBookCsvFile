@@ -1,5 +1,8 @@
 package com.capgemini.csvFile;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -9,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -33,6 +37,7 @@ public class AddressBookMain {
 
 		String path = "F:\\Capgemini workspace";
 		String directory = "Address Book Directory";
+		String Json_directory = "Address Book Json Directory";
 
 		int choice = 1;
 
@@ -45,7 +50,7 @@ public class AddressBookMain {
 					+ "11 Print count of contacts in particular state" + "\n12 To sort using first name"
 					+ "\n13 To sort using city \n14 To sort using state" + "\n15 To sort using zipcode "
 					+ "\n16 to write to file \n17 To read from file\n18 to write to csv file\n19 to read from csv"
-					+ "\n0 to exit"); 
+					+ "\n20 to write to Json file\n21 to read from Json\n0 to exit"); 
 			choice = sc.nextInt();
 			switch (choice) {
 
@@ -385,6 +390,47 @@ public class AddressBookMain {
 						System.out.println("**********************************");
 					}
 				}
+				
+			case 20:
+				System.out.println("Enter the name of the address book to add to csv file");
+				ArrayList<AddressBookContent> listGson = hm.get(sc.next());
+				Path pathLocJson = Paths.get(path + "\\addressbook\\" + Json_directory);
+				if (Files.notExists(pathLocJson))
+					Files.createDirectory(pathLocJson);
+
+				String SAMPLE_JSON_FILE = path + "\\eclipse-workspace\\AddressBookLib\\" + Json_directory + "\\Json directory"
+						 + ".json";
+				Gson gson = new Gson();
+				String json = gson.toJson(listGson);
+				FileWriter writer = new FileWriter(SAMPLE_JSON_FILE);
+				writer.write(json);
+				writer.close();
+				break;
+				
+			case 21:
+				Path pathLocJsonread = Paths.get(path + "\\addressbook\\" + Json_directory);
+				if (Files.notExists(pathLocJsonread))
+					Files.createDirectory(pathLocJsonread);
+
+				String SAMPLE_JSON_FILE1 = path + "\\addressbook\\" + Json_directory + "\\file_json"
+						+".json";
+				Gson gson1 = new Gson();
+
+				BufferedReader br = new BufferedReader(new FileReader(SAMPLE_JSON_FILE1));
+				AddressBookContent[] contact = gson1.fromJson(br, AddressBookContent[].class);
+				List<AddressBookContent> contactList = Arrays.asList(contact);
+				for (AddressBookContent a : contactList) {
+					System.out.println("Firstname : " + a.firstName);
+					System.out.println("Lastname : " + a.lastName);
+					System.out.println("Address : " + a.address);
+					System.out.println("City : " + a.city);
+					System.out.println("State : " + a.state);
+					System.out.println("Zip : " + a.zip);
+					System.out.println("Phone number : " + a.phNo);
+					System.out.println("Email : " + a.email);
+					System.out.println("**********************************");
+				}
+				
 
 			default:
 			}
